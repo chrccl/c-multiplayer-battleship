@@ -281,13 +281,13 @@ void handle_user_choice(SOCKET sockfd, int player_id, char *coordinate_token, in
         square[2] = player_id - 1;
         write_server_square(sockfd, square);
     } else {
-        printf("Qualcosa è andato storto. Non mi chiedere cosa.\n");
+        printf("Qualcosa è andato storto.\n");
     }
 }
 
 void take_turn(SOCKET sockfd) {
     const char letters[10] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
-    char buffer[5];
+    char buffer[100];
     int square[3];
 
     display_alive_players(sockfd);
@@ -341,15 +341,13 @@ int validate_vertical_placement(const char *placement, int grid[GRID_SIZE][GRID_
 }
 
 int validate_and_place(int grid[GRID_SIZE][GRID_SIZE], int **coordinates, int ship_size, int value) {
-    // Check all coordinates for validity and place the ship if possible
     for (int i = 0; i < ship_size; i++) {
         int row = coordinates[i][0];
         int col = coordinates[i][1];
         if (grid[row][col] != 0) {
-            return 0;  // Invalid placement if any cell is already occupied
+            return 0;
         }
     }
-    // Place the ship after all checks pass
     for (int i = 0; i < ship_size; i++) {
         int row = coordinates[i][0];
         int col = coordinates[i][1];
@@ -358,11 +356,12 @@ int validate_and_place(int grid[GRID_SIZE][GRID_SIZE], int **coordinates, int sh
     return 1;
 }
 
-void place_ship(int grid[GRID_SIZE][GRID_SIZE], char *placement, const char *ship_name, int ship_size, int value) {
+void place_ship(int grid[GRID_SIZE][GRID_SIZE], const char *ship_name, int ship_size, int value) {
     const char letters[10] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
+    char placement[100];
+
     int is_correct = 0;
 
-    // Dynamically allocate a 2D array for coordinates
     int **coordinates = malloc(ship_size * sizeof(int *));
     for (int i = 0; i < ship_size; i++) {
         coordinates[i] = malloc(2 * sizeof(int));
@@ -370,8 +369,10 @@ void place_ship(int grid[GRID_SIZE][GRID_SIZE], char *placement, const char *shi
 
     while (!is_correct) {
         printf("Inserisci le coordinate per %s: ", ship_name);
-        scanf("%s", placement);
-
+        if (fgets(placement, sizeof(placement), stdin) == NULL) {
+            error("Errore durante input");
+        }
+        placement[strcspn(placement, "\n")] = 0;
         if (is_valid_placement(placement, ship_size * 3 - 1)) {  // Account for '-' separators
             int valid_input = 1;
 
@@ -388,7 +389,6 @@ void place_ship(int grid[GRID_SIZE][GRID_SIZE], char *placement, const char *shi
             }
 
             if (valid_input) {
-                // Validate and place the ship if coordinates are correct
                 is_correct = validate_and_place(grid, coordinates, ship_size, value);
             }
         }
@@ -397,8 +397,6 @@ void place_ship(int grid[GRID_SIZE][GRID_SIZE], char *placement, const char *shi
             printf("Posizionamento errato di %s. Per favore riprova.\n", ship_name);
         }
     }
-    int ch;
-    while ((ch = getchar()) != '\n' && ch != EOF);
 
     // Free dynamically allocated memory
     for (int i = 0; i < ship_size; i++) {
@@ -416,22 +414,18 @@ void fill_data(SOCKET sockfd) {
     const char *submarine = "Sottomarino";
     const char *aircraft_carrier = "Portaerei";
 
-    char torpedo_placement[6];
-    char submarine_placement[9];
-    char aircraft_carrier_placement[12];
-
     draw_grid_placement(player_grid);
     printf("\nPer iniziare, posiziona il tuo %s (%d caselle).\n", torpedo, 2);
     printf("Scegli le caselle che vuoi riempire (es. 0D-0E o 4C-5C).\n");
-    place_ship(player_grid, torpedo_placement, torpedo, 2, 1);
+    place_ship(player_grid, torpedo, 2, 1);
     for (int i = 0; i < 2; i++) {
         draw_grid_placement(player_grid);
         printf("\nBene, ora posiziona il %s %d. (es. 2D-2E-2F o 4F-5F-6F)\n", submarine, i + 1);
-        place_ship(player_grid, submarine_placement, submarine, 3, i + 2);
+        place_ship(player_grid, submarine, 3, i + 2);
     }
     draw_grid_placement(player_grid);
     printf("\nInfine, posiziona il tuo %s (es. 8A-8B-8C-8D o 3G-4G-5G-6G).\n", aircraft_carrier);
-    place_ship(player_grid, aircraft_carrier_placement, aircraft_carrier, 4, 4);
+    place_ship(player_grid, aircraft_carrier, 4, 4);
 
     printf("Perfetto! La tua griglia è stata riempita correttamente.\n");
     write_server_data(sockfd, player_grid);

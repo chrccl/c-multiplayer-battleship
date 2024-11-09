@@ -321,7 +321,7 @@ void recv_turn_action(int cli_sockfd, int *tmp, int *grid_to_send){
     perror("Square Read error");
     exit(EXIT_FAILURE);
   }
-  printf("%d %d %d\n", buffer[0], buffer[1], buffer[2]);
+  printf("Mossa: %d %d %d\n", buffer[0], buffer[1], buffer[2]);
   if(buffer[0] == -1){
     *grid_to_send = buffer[2];
   }else{
