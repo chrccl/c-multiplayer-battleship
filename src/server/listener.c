@@ -6,6 +6,12 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+#include "../common/constants.h"
+
+#ifndef GAME_EXEC_NAME
+    #error "non e' stato possibile completare la compilazione in quanto il path dell'eseguibile del gioco non e' stato definito correttamente"
+#endif
+
 void *init_game(void *num_player){
   if(fork() == 0){
     char argv[2];

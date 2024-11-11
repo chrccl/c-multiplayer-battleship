@@ -8,7 +8,7 @@ IMPORTS
 #include <winsock2.h>
 #include <windows.h>
 #include <errno.h>
-#include "constants.h"
+#include "../common/constants.h"
 
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "User32.lib")
@@ -121,8 +121,8 @@ void draw_legends() {
 
 void print_grid_row(int row, char data[GRID_SIZE][GRID_SIZE][30]) {
     printf("%d | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | \n",
-           row, data[row][0], data[row][1], data[row][2], data[row][3], 
-           data[row][4], data[row][5], data[row][6], data[row][7], 
+           row, data[row][0], data[row][1], data[row][2], data[row][3],
+           data[row][4], data[row][5], data[row][6], data[row][7],
            data[row][8], data[row][9]);
 }
 
@@ -145,7 +145,7 @@ void draw_grid(int grid[GRID_SIZE][GRID_SIZE], int is_game_grid) {
     char data[GRID_SIZE][GRID_SIZE][30];
     initialize_data_array(data, grid);
 
-    const char *header = is_game_grid ? "    A | B | C | D | E | F | G | H | I | J | \n" : 
+    const char *header = is_game_grid ? "    A | B | C | D | E | F | G | H | I | J | \n" :
                                          "    A | B | C | D | E | F | G | H | I | J | \n";
     printf("%s", header);
     printf("   -------------------------------------------\n");
@@ -217,7 +217,7 @@ void get_alive_players(SOCKET sockfd, int *num_players, int **players){
   if (n == SOCKET_ERROR)
     error("Error reading from socket 1");
   *players = (int*)malloc(*num_players * sizeof(int));
-  if (*players == NULL) 
+  if (*players == NULL)
     error("Memory allocation failed");
   n = recv(sockfd, *players, (*num_players)*sizeof(int), 0);
   if (n == SOCKET_ERROR)
