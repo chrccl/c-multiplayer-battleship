@@ -454,18 +454,6 @@ int handle_message(SOCKET sockfd, char *msg) {
     printf(COLOR_RED "Uno dei tuoi avversari ha colpito la tua flotta! Rimani concentrato!" COLOR_RESET "\n");
   } else if (!strcmp(msg, MSG_TARGET_HIT)) {
     printf(COLOR_GREEN "Hai colpito l'obiettivo! Continua l'offensiva!" COLOR_RESET "\n");
-  } else if (!strcmp(msg, MSG_ENEMY_AIRCRAFT_CARRIER_SUNK)) {
-    printf("\n" COLOR_YELLOW "Hai affondato la portaerei del tuo avversario." COLOR_RESET "\n");
-  } else if (!strcmp(msg, MSG_OWN_AIRCRAFT_CARRIER_SUNK)) {
-    printf("\n" COLOR_YELLOW "La vostra portaerei è stata affondata..." COLOR_RESET "\n");
-  } else if (!strcmp(msg, MSG_ENEMY_SUBMARINE_SUNK)) {
-    printf("\n" COLOR_CYAN "Hai affondato uno dei sottomarini del tuo avversario!" COLOR_RESET "\n");
-  } else if (!strcmp(msg, MSG_OWN_SUBMARINE_SUNK)) {
-    printf("\n" COLOR_CYAN "Il tuo sottomarino è stato affondato..." COLOR_RESET "\n");
-  } else if (!strcmp(msg, MSG_ENEMY_DESTROYER_SUNK)) {
-    printf("\n" COLOR_RED "Hai affondato la torpediniera del tuo avversario!" COLOR_RESET "\n");
-  } else if (!strcmp(msg, MSG_OWN_DESTROYER_SUNK)) {
-    printf("\n" COLOR_RED "La vostra torpediniera è stata affondata..." COLOR_RESET "\n");
   } else if (!strcmp(msg, MSG_TARGET_SUNK)) {
     printf(COLOR_GREEN "Hai affondato il tuo obiettivo! Continua così e vincerai!" COLOR_RESET "\n");
   } else if (!strcmp(msg, MSG_OPPONENT_TARGET_SUNK)) {
@@ -499,6 +487,7 @@ int main(int argc, char * argv[]) {
   }
   SOCKET sockfd = connect_to_server(argv[1], atoi(argv[2]));
   int id = recv_int(sockfd);
+  printf("Sei il giocatore con ID: %d\n", id+1);
   char msg[4];
   printf("La battaglia navale di Mirko Cetorelli e Christian Cecili\n");
 

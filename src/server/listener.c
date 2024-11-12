@@ -16,7 +16,7 @@ void *init_game(void *num_player){
   if(fork() == 0){
     char argv[2];
     sprintf(argv, "%d", *(int *)num_player);
-    execl("./game", "./game", &argv, NULL);
+    execl(GAME_EXEC_NAME, GAME_EXEC_NAME, &argv, NULL);
     exit(EXIT_FAILURE);
   }
   pthread_exit(NULL);
