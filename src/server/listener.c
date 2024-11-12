@@ -61,7 +61,7 @@ void wait_game_players(int num_player, int *players_fd, int sockfd){
       num_conn++;
       if (num_conn < (num_player-1)) {
         for(int i = 0; i < num_conn; i++){
-          int n = write(players_fd[i], "HLD", strlen("HLD"));
+          int n = write(players_fd[i], MSG_WAIT_FOR_PLAYERS, strlen(MSG_WAIT_FOR_PLAYERS));
           if (n < 0){
               printf("errore durante la connessione di un giocatore alla partita\n");
               exit(EXIT_FAILURE);

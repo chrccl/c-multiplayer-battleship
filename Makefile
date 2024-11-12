@@ -23,4 +23,4 @@ client:
 		cl $(wildcard $(CLIENT_DIR)/*.c) -o $(CLIENT_EXEC_NAME)
 		!echo "servizio client compilato con successo, per connettersi ad una partita si esegua \"Client <INDIRIZZO IP SERVIZIO DI HOSTING> <NUMERO PORTA SERVIZIO DI HOSTING>\""
 	else
-		!echo "the client service must be compiled and executed on a Windows system"
+		!echo "il servizio client deve essere compilato attraverso una DCP of Visual Studio"
