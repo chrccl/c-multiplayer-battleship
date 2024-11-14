@@ -285,7 +285,7 @@ void handle_user_choice(SOCKET sockfd, int player_id, char *coordinate_token, in
     }
 }
 
-void take_turn(SOCKET sockfd) {
+void take_turn(SOCKET sockfd, int my_id) {
     const char letters[10] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
     char buffer[100];
     int square[3];
@@ -307,6 +307,11 @@ void take_turn(SOCKET sockfd) {
         }
 
         char *coordinate_token = strtok(NULL, " ");
+        if(coordinate_token != NULL && player_id == my_id){
+            printf("Non puoi attaccare te stesso.\n");
+            continue;
+        }
+        
         handle_user_choice(sockfd, player_id, coordinate_token, square, letters);
         recv_and_print_player_game_grid(sockfd);
         break;
@@ -440,7 +445,7 @@ CLIENT MAIN
 ***************************************************/
 
 
-int handle_message(SOCKET sockfd, char *msg) {
+int handle_message(SOCKET sockfd, char *msg, int my_id) {
   if (!strcmp(msg, MSG_FILL_GRID)) {
     printf("Riempi la griglia...\n");
     fill_data(sockfd);
@@ -464,7 +469,7 @@ int handle_message(SOCKET sockfd, char *msg) {
     printf(COLOR_RED "Hai mancato il tuo obiettivo! Rimani concentrato!" COLOR_RESET "\n");
   } else if (!strcmp(msg, MSG_YOUR_TURN)) {
     printf("\n" COLOR_BLUE "E' il tuo turno!" COLOR_RESET "\n");
-    take_turn(sockfd);
+    take_turn(sockfd, my_id);
   } else if (!strcmp(msg, MSG_WIN)) {
     printf("\n" COLOR_GREEN "BRAVO SOLDATO! HAI VINTO!" COLOR_RESET "\n");
     return 0;
@@ -499,7 +504,7 @@ int main(int argc, char * argv[]) {
 
   do {
     recv_msg(sockfd, msg);
-  }while(handle_message(sockfd, msg));
+  }while(handle_message(sockfd, msg, (id+1)));
 
   printf("Partita finita!\n");
   closesocket(sockfd);
